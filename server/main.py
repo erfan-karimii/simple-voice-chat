@@ -10,40 +10,42 @@ SERVER.listen(5)
 
 print(f"server listening on {HOST}:{PORT}")
 
-clients = []
+CLIENTS = []
 
 
 def start():
     try:
         while True:
             conn, addr = SERVER.accept()
-            clients.append(conn)
+            CLIENTS.append(conn)
             t = threading.Thread(target=send, args=(conn,))
             t.start()
     except Exception as e:
         print("Error accepting connection:", e)
 
 
+def broadcast_for_others(conn,data):
+    for cl in CLIENTS:
+        if cl != conn:
+            cl.send(data)
+
+
 def send(from_connection):
     try:
         while True:
             data = from_connection.recv(4096)
-            for cl in clients:
-                if cl != from_connection:
-                    cl.send(data)
+            broadcast_for_others(from_connection,data)
     except Exception as e:
         print("Client Disconnected", e)
     finally:
         print(f"Closing connection ...")
         from_connection.close()
-        if from_connection in clients:
-            clients.remove(from_connection)
+        if from_connection in CLIENTS:
+            CLIENTS.remove(from_connection)
 
         with wave.open("byebye.wav", "rb") as wf:
             while len(data := wf.readframes(1024)):
-                for cl in clients:
-                    if cl != from_connection:
-                        cl.send(data)
+                broadcast_for_others(from_connection,data)
 
 
 if __name__ == "__main__":
