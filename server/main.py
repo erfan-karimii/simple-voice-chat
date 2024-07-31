@@ -24,7 +24,7 @@ def start():
         print("Error accepting connection:", e)
 
 
-def broadcast_for_others(conn,data):
+def broadcast(conn,data):
     for cl in CLIENTS:
         if cl != conn:
             cl.send(data)
@@ -34,7 +34,7 @@ def send(from_connection):
     try:
         while True:
             data = from_connection.recv(4096)
-            broadcast_for_others(from_connection,data)
+            broadcast(from_connection,data)
     except Exception as e:
         print("Client Disconnected", e)
     finally:
@@ -45,7 +45,7 @@ def send(from_connection):
 
         with wave.open("byebye.wav", "rb") as wf:
             while len(data := wf.readframes(1024)):
-                broadcast_for_others(from_connection,data)
+                broadcast(from_connection,data)
 
 
 if __name__ == "__main__":
