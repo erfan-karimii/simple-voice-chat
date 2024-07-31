@@ -4,13 +4,14 @@ import pyaudio
 import sys
 import numpy as np
 
+
 CLIENT = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # host = "87.248.153.134"
-HOST = "127.0.0.1"
+HOST = "87.248.153.134"
 THRESHOLD = 200
 PORT = 5000
-CHUNKS = 1024
+CHUNKS = 2048
 
 
 def connect():
@@ -50,7 +51,8 @@ if __name__ == "__main__":
     p = pyaudio.PyAudio()
     Format = pyaudio.paInt16
     channels = 1 if sys.platform == "darwin" else 2
-    rate = 44100
+    rate = 46000
+    
 
     input_stream = p.open(
         format=Format,
